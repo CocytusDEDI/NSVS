@@ -1,0 +1,1 @@
+nmap-service-probes.txt is under the copyright of (C) 2003-2006 by Insecure.Com LLC. No warranty is provided for nmap-service-probes.txt or the rest of the program. nmap-service-probes.txt and this program is under the license of the General Public License which can be found at "https://www.gnu.org/licenses/old-licenses/gpl-1.0.html" and along with the source code.

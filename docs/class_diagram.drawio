@@ -1,0 +1,39 @@
+<mxfile host="app.diagrams.net" modified="2024-01-26T11:34:59.292Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0" etag="ObkpaIlflrl1-cn2r4MO" version="23.0.1" type="github">
+  <diagram name="Page-1" id="z_iRQq7G1XtyMHcU_vTw">
+    <mxGraphModel dx="599" dy="304" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-1" value="File" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="190" height="148" as="geometry">
+            <mxRectangle x="330" y="240" width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-2" value="&lt;div&gt;+ filename: string&lt;/div&gt;&lt;div&gt;- _contents: list[string] | None&lt;br&gt;&lt;/div&gt;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="gMa4_N2F3NY7GEiLbo7n-1" vertex="1">
+          <mxGeometry y="26" width="190" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="gMa4_N2F3NY7GEiLbo7n-1" vertex="1">
+          <mxGeometry y="80" width="190" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-4" value="&lt;div&gt;+ get_contents(): list[string]&lt;/div&gt;&lt;div&gt;+ unload_contents(): None&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="gMa4_N2F3NY7GEiLbo7n-1" vertex="1">
+          <mxGeometry y="88" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-5" value="&lt;div&gt;ParsingError&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="254" y="128" width="156" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-6" value="+ filename: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="gMa4_N2F3NY7GEiLbo7n-5" vertex="1">
+          <mxGeometry y="26" width="156" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-10" value="&lt;b&gt;Exception&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="254" y="40" width="156" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gMa4_N2F3NY7GEiLbo7n-11" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="gMa4_N2F3NY7GEiLbo7n-5" target="gMa4_N2F3NY7GEiLbo7n-10" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="240" as="sourcePoint" />
+            <mxPoint x="440" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
