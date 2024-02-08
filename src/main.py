@@ -347,7 +347,7 @@ def results_menu(data) -> None:
 
 if __name__ == "__main__":
     print("nmap-service-probes.txt is under the copyright of (C) 2003-2006 by Insecure.Com LLC.\nNo warranty is "
-          "provided for nmap-service-probes.txt or the rest of the program.\nnmap-service-probes.txt and this program "
-          "is under the license of the General Public License which can be found at: "
+          "provided for nmap-service-probes.txt or the rest of the program.\nboth nmap-service-probes.txt and this program "
+          "are under the General Public License which can be found at: "
           "https://www.gnu.org/licenses/old-licenses/gpl-1.0.html\n")
     main_menu()
