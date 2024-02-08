@@ -383,11 +383,6 @@ def get_cpe_cves(cpe: str, limit: int = DEFAULT_CVE_LIMIT) -> 'None|CVES_TYPE':
     return None
 
 
-cpe = info_to_cpe("firefox")
-print(cpe)
-print(get_cpe_cves(cpe["cpeName"]))
-
-
 def is_same_version(version_one: str, version_two: str) -> bool:
     """
     Compares two semantic versions to see if they're the same.
