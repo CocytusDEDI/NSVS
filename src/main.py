@@ -202,7 +202,7 @@ def preset_scan() -> None:
         print("No presets\n")
         return
 
-    print("\nChoose preset number:\n")
+    print("Choose preset number:\n")
     print_presets()
 
     valid_preset = False
@@ -211,6 +211,7 @@ def preset_scan() -> None:
         if preset_choice.isdigit():
             preset_choice = int(preset_choice)
             if 1 <= preset_choice <= num_of_presets:
+                print()
                 interfaces = choose_interfaces()
                 print()
                 results_menu(handle_scan(int(preset_choice) - 1, interfaces, progress_callback))
