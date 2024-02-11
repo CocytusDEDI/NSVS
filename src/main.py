@@ -11,6 +11,7 @@ def main_menu() -> None:
     while True:
         scan_choice = input("Options:\n1. Default scan\n2. Preset scan\n3. Manage presets\n>").lower().strip()
         if scan_choice == "default scan" or scan_choice == "1":
+            print()
             interfaces = choose_interfaces()
             print()
             results_menu(handle_scan(interfaces=interfaces, progress_callback=progress_callback))
