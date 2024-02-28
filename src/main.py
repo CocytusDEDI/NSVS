@@ -134,51 +134,59 @@ def manage_presets_menu() -> None:
     A menu with the options of creating, deleting and displaying presets.
     :return: None
     """
+    print("Options:\n1. Create\n2. Delete\n3. Display")
 
-    custom_choice = input("Options:\n1. Create\n2. Delete\n3. Display\n>").lower().strip()
-    print()
+    while True:
+        choice = input(">").lower().strip()
+        print()
 
-    if custom_choice == "create" or custom_choice == "1":
-        while True:
-            try:
-                attempt_create_preset()
-            except ValueError as error:
-                # Errors manually raised by attempt_create_preset() have two args, the first is the error message, the
-                # second is the invalid input which could be "exit" or "quit".
-                if len(error.args) != 2:  # This check must be here to stop the elif from throwing an IndexError.
-                    print(error.args[0])
-                elif error.args[1].lower().strip() == "exit" or error.args[1].lower().strip() == "quit":
-                    print()
+        if choice == "create" or choice == "1":
+            while True:
+                try:
+                    attempt_create_preset()
+                except ValueError as error:
+                    # Errors manually raised by attempt_create_preset() have two args, the first is the error message, the
+                    # second is the invalid input which could be "exit" or "quit".
+                    if len(error.args) != 2:  # This check must be here to stop the elif from throwing an IndexError.
+                        print(error.args[0])
+                    elif error.args[1].lower().strip() == "exit" or error.args[1].lower().strip() == "quit":
+                        print()
+                        break
+                    else:
+                        print(error.args[0])
+                    continue  # Retry attempt_create_preset()
+
+                print("\nPreset created\n")
+                break
+
+        elif choice == "delete" or choice == "2":
+            print_presets()
+            while True:
+                preset_num = input("Enter the preset number to delete: ").strip().lower()
+                if preset_num.isdigit():
+                    preset_num = int(preset_num) - 1
+                    if preset_num <= len(get_presets()):
+                        delete_preset(preset_num)
+                        print("\nPreset deleted\n")
+                        break
+                    else:
+                        print("not a valid preset number")
+                elif preset_num == "exit" or preset_num == "quit":
                     break
                 else:
-                    print(error.args[0])
-                continue  # Retry attempt_create_preset()
+                    print("enter a number")
 
-            print("\nPreset created\n")
+        elif choice == "display" or choice == "3":
+            if len(get_presets()) == 0:
+                print("No presets\n")
+            else:
+                print_presets()
+        
+        elif choice == "quit" or choice == "exit":
             break
 
-    elif custom_choice == "delete" or custom_choice == "2":
-        print_presets()
-        while True:
-            preset_num = input("Enter the preset number to delete: ").strip().lower()
-            if preset_num.isdigit():
-                preset_num = int(preset_num) - 1
-                if preset_num <= len(get_presets()):
-                    delete_preset(preset_num)
-                    print("\nPreset deleted\n")
-                    break
-                else:
-                    print("not a valid preset number")
-            elif preset_num == "exit" or preset_num == "quit":
-                break
-            else:
-                print("enter a number")
-
-    elif custom_choice == "display" or custom_choice == "3":
-        if len(get_presets()) == 0:
-            print("No presets\n")
         else:
-            print_presets()
+            print("Invalid choice")
 
 
 def print_presets() -> None:
@@ -208,7 +216,7 @@ def preset_scan() -> None:
 
     valid_preset = False
     while not valid_preset:
-        preset_choice = input(">")
+        preset_choice = input(">").strip().lower()
         if preset_choice.isdigit():
             preset_choice = int(preset_choice)
             if 1 <= preset_choice <= num_of_presets:
@@ -263,7 +271,7 @@ def choose_dictionary_key_value_pair(dictionary: dict) -> (list[str], dict):
         else:
             print(str(i) + ". " + str(key) + ": " + str(dictionary[key]))
         i += 1
-    return list(dictionary), dict  # ports
+    return list(dictionary), dict
 
 
 def display_dictionary(dictionary: dict) -> (None, None):
@@ -274,7 +282,13 @@ def display_dictionary(dictionary: dict) -> (None, None):
     return None, None
 
 
-def get_choice(data) -> 'int|str|None':
+def get_choice(data: tuple) -> 'int|str|None':
+    """
+    Gets a user's choice of value from a list or dictionary.
+    :param data: A pair of values, the first being the options to iterate through or none and the second 
+     being the data type or none.
+    :return: A position in a list, a key in a dictionary or None.
+    """
     options, data_type = data
     done = False
     if data_type is None:
@@ -303,7 +317,7 @@ def results_menu(data) -> None:
     while True:
         print()
         if isinstance(data, dict):
-            if data.get("port"):  # if data is port data.
+            if data.get("port"):  # If data is port data.
                 choice = get_choice(choose_dictionary_key_value_pair(data))
                 if choice == -1:
                     return
@@ -313,10 +327,10 @@ def results_menu(data) -> None:
                     results_menu(data[choice])
                 else:
                     input("Empty: Enter anything to continue...")
-            elif data.get("id") or data.get("cpeName"):  # if data is cpe or cve.
+            elif data.get("id") or data.get("cpeName"):  # If data is cpe or cve.
                 display_dictionary(data)
                 return
-            else:  # data is interfaces.
+            else:  # Data is interfaces.
                 choice = get_choice(choose_dictionary_value_from_dictionary(data, "interface"))
                 if choice != -1:
                     results_menu(data[choice])
