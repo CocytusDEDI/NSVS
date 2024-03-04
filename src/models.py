@@ -40,6 +40,8 @@ DEFAULT_CPE_LIMIT = config["models"]["DEFAULT_CPE_LIMIT"] \
     if (config.get("models", {}).get("DEFAULT_CPE_LIMIT")) else 50
 DEFAULT_CVE_LIMIT = config["models"]["DEFAULT_CVE_LIMIT"] \
     if (config.get("models", {}).get("DEFAULT_CVE_LIMIT")) else 3
+NUMBER_OF_BYTES_TO_RECEIVE = config["models"]["NUMBER_OF_BYTES_TO_RECEIVE"] \
+    if (config.get("models", {}).get("NUMBER_OF_BYTES_TO_RECEIVE")) else 1024
 
 CVES_TYPE = list[dict]
 CPE_TYPE = dict
@@ -109,7 +111,8 @@ def get_network_and_host_ips(subnet_mask: str, ip_address: str) -> list[str]:
 
 
 def probe_device(ip: str, port: int, protocol: str, probe_text: bytes = None,
-                 timeout: 'float|int' = DEFAULT_PROBE_TIMEOUT) -> str:
+                 timeout: 'float|int' = DEFAULT_PROBE_TIMEOUT,
+                 number_of_bytes_to_receive: int = NUMBER_OF_BYTES_TO_RECEIVE) -> str:
     """
     Probes a device using socket to try and retrieve a banner from it.
     :param ip: A string that can be a IPv4 address and various other forms.
@@ -121,7 +124,6 @@ def probe_device(ip: str, port: int, protocol: str, probe_text: bytes = None,
     :raise UnicodeDecodeError: If error in decoding received banner.
     :return: A banner (the initial response back from a device upon connecting).
     """
-    NUMBER_OF_BYTES_TO_RECEIVE = 1024
     # Deciding to use TCP or UDP.
     if protocol == "TCP":
         connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -135,7 +137,7 @@ def probe_device(ip: str, port: int, protocol: str, probe_text: bytes = None,
     if probe_text:
         connection.sendall(probe_text)
     # Receive and decode received data.
-    banner = connection.recv(NUMBER_OF_BYTES_TO_RECEIVE).decode().strip("\n").strip("\r")
+    banner = connection.recv(number_of_bytes_to_receive).decode().strip("\n").strip("\r")
     connection.close()
     return banner
 
