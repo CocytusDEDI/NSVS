@@ -120,6 +120,7 @@ def probe_device(ip: str, port: int, protocol: str, probe_text: bytes = None,
     :param protocol: Must be "TCP" or "UDP".
     :param probe_text: Text to send to target machine to probe a response out.
     :param timeout: How the program should wait for a response back before giving up in seconds.
+    :param number_of_bytes_to_receive: The max size of a response to receive from a device.
     :raise socket.error: If connection error occurs.
     :raise UnicodeDecodeError: If error in decoding received banner.
     :return: A banner (the initial response back from a device upon connecting).
