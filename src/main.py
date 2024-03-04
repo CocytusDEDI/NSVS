@@ -1,4 +1,4 @@
-from api import handle_scan, create_preset, delete_preset, get_interfaces, get_presets, NUMBERS
+from api import handle_scan, create_preset, delete_preset, get_interfaces, get_presets, NUMBERS, SCAN_RESULTS_TYPE
 import sys
 
 
@@ -183,7 +183,7 @@ def manage_presets_menu() -> None:
                 print("No presets\n")
             else:
                 print_presets()
-        
+
         elif choice == "quit" or choice == "exit":
             break
 
@@ -242,12 +242,13 @@ def preset_scan() -> None:
             print("input a number")
 
 
-def results_menu(data):
+def results_menu(scan_results: SCAN_RESULTS_TYPE):
     """
     Recursively displays the results of a scan.
-    :param data: Could be multiple datatypes, but initial value is most likely of type SCAN_RESULTS_TYPE.
+    :param scan_results: SCAN_RESULTS_TYPE
     :return: None.
     """
+
     def choose_dictionary_value_from_dictionary(dictionary: dict, data_name: str) -> (list[str], dict):
         print("0. Exit")
         i = 1
@@ -255,7 +256,6 @@ def results_menu(data):
             print(str(i) + ". " + data_name + ": " + interface)
             i += 1
         return list(dictionary), dict
-
 
     def choose_sub_dictionary_from_list_of_dictionaries(list_of_dict: list[dict], data_name: str, key: str) \
             -> (list[dict], list):
@@ -266,16 +266,14 @@ def results_menu(data):
             i += 1
         return list_of_dict, list
 
-
     def choose_device(list_of_device_dicts: list[dict]) -> (list[dict], list):
         print("0. Back")
         i = 1
         for device in list_of_device_dicts:
             print(str(i) + ". ip: " + str(device["ip"]) + ", successful connections: " +
-                str(len([1 for port_data in device["ports_data"] if port_data["connection_status"] is True])))
+                  str(len([1 for port_data in device["ports_data"] if port_data["connection_status"] is True])))
             i += 1
         return list_of_device_dicts, list
-
 
     def choose_dictionary_key_value_pair(dictionary: dict) -> (list[str], dict):
         print("0. Back")
@@ -290,7 +288,6 @@ def results_menu(data):
             i += 1
         return list(dictionary), dict
 
-
     def display_dictionary(dictionary: dict) -> (None, None):
         i = 1
         for key in list(dictionary):
@@ -298,15 +295,14 @@ def results_menu(data):
             i += 1
         return None, None
 
-
-    def get_choice(data: tuple) -> 'int|str|None':
+    def get_choice(choice_data: tuple) -> 'int|str|None':
         """
         Gets a user's choice of value from a list or dictionary.
-        :param data: A pair of values, the first being the options to iterate through or none and the second
+        :param choice_data: A pair of values, the first being the options to iterate through or none and the second
         being the data type or none.
         :return: A position in a list, a key in a dictionary or None.
         """
-        options, data_type = data
+        options, data_type = choice_data
         done = False
         if data_type is None:
             input("Enter anything to continue...")
@@ -324,11 +320,10 @@ def results_menu(data):
                 else:
                     print("Please enter a number in the range.")
 
-
-    def results_menu_internal(data) -> None:
+    def results_menu_internal(data: 'list|dict') -> None:
         """
         The internal subroutine of results_menu that actually does the work. Recursively displays the results of a scan.
-        :param data: Could be multiple datatypes, but initial value is most likely of type SCAN_RESULTS_TYPE.
+        :param data: Could be multiple datatypes, but initial value should be type SCAN_RESULTS_TYPE.
         :return: None.
         """
         while True:
@@ -344,7 +339,7 @@ def results_menu(data):
                         results_menu_internal(data[choice])
                     else:
                         input("Empty: Enter anything to continue...")
-                elif data.get("id") or data.get("cpeName"):  # If data is cpe or cve.
+                elif data.get("id") or data.get("cpeName"):  # If data is CPE or CVE.
                     display_dictionary(data)
                     return
                 else:  # Data is interfaces.
@@ -364,7 +359,7 @@ def results_menu(data):
                         results_menu_internal(data[choice])
                     else:
                         return
-                elif data[0].get("id"):  # If data is cves.
+                elif data[0].get("id"):  # If data is CVEs.
                     choice = get_choice(choose_sub_dictionary_from_list_of_dictionaries(data, "cve", "id"))
                     if choice != -1:
                         results_menu_internal(data[choice])
@@ -376,10 +371,11 @@ def results_menu(data):
                         results_menu_internal(data[choice]["ports_data"])
                     else:
                         return
-    return results_menu_internal(data)
+
+    return results_menu_internal(scan_results)
 
 
-# Starts the code if this file was ran directly.
+# Starts the code if this file was run directly.
 if __name__ == "__main__":
     print("nmap-service-probes.txt is under the copyright of (C) 2003-2006 by Insecure.Com LLC.\nNo warranty is "
           "provided for nmap-service-probes.txt or the rest of the program.\nboth nmap-service-probes.txt and this program "
