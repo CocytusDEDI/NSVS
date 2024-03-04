@@ -9,23 +9,29 @@ import time
 import tomli
 
 __all__ = ["full_scan", "parse_ipconfig", "ParsingError", "info_to_cpe", "get_cpe_cves", "SCAN_RESULTS_TYPE",
-           "DEFAULT_CVE_LIMIT", "DEFAULT_CPE_LIMIT"]
+           "DEFAULT_CVE_LIMIT", "DEFAULT_CPE_LIMIT", "CONFIG_PATH"]
+
+# Paths for needed files.
+NMAP_SERVICE_PROBES_PATH = "./nmap-service-probes.txt"
+CONFIG_PATH = "./config.toml"
 
 
 class ParsingError(Exception):
     """Raise if file could not be interpreted."""
 
-    def __init__(self, filename) -> None:
-        self.filename = filename
-        super().__init__(f"Failed to interpret {filename}")
+    def __init__(self, filepath) -> None:
+        self.filepath = filepath
+        super().__init__(f"Failed to interpret {self.filepath}")
 
 
+# Opens the config file and grabs the contents.
 try:
-    with open("config.toml", "rb") as config_file:
+    with open(CONFIG_PATH, "rb") as config_file:
         config = tomli.load(config_file)
 except (tomli.TOMLDecodeError, FileNotFoundError):
     config = {}
 
+# Set the default values using config file, if config file doesn't exist then use default values typed into the program.
 DEFAULT_PROBE_TIMEOUT = config["models"]["DEFAULT_PROBE_TIMEOUT"] \
     if (config.get("models", {}).get("DEFAULT_PROBE_TIMEOUT")) else 3
 DEFAULT_ALLOW_TIMEOUT_OVERRIDE = config["models"]["DEFAULT_ALLOW_TIMEOUT_OVERRIDE"] \
@@ -34,7 +40,6 @@ DEFAULT_CPE_LIMIT = config["models"]["DEFAULT_CPE_LIMIT"] \
     if (config.get("models", {}).get("DEFAULT_CPE_LIMIT")) else 50
 DEFAULT_CVE_LIMIT = config["models"]["DEFAULT_CVE_LIMIT"] \
     if (config.get("models", {}).get("DEFAULT_CVE_LIMIT")) else 3
-
 
 CVES_TYPE = list[dict]
 CPE_TYPE = dict
@@ -72,7 +77,7 @@ class File:
         self._contents = None
 
 
-nmap_service_probes = File("nmap-service-probes.txt")
+nmap_service_probes = File(NMAP_SERVICE_PROBES_PATH)
 
 
 def get_network_and_host_ips(subnet_mask: str, ip_address: str) -> list[str]:
@@ -139,8 +144,8 @@ def parse_ipconfig() -> dict[str, dict[str, 'str|list[str]']]:
     Parses the results of the "IpConfig" cmd command into a dictionary.
     :return: {interface name (string): {property name (string): property value (string), ...}, ...}.
     """
-    # Gets command output using 'subprocess'.
-    # Removes the first 32 characters since they don't contain any useful information.
+    # Gets the output of the command 'ipconfig' using 'subprocess'.
+    # Removes the first 32 characters of output since they don't contain any useful information.
     ipconfig = subprocess.check_output("ipconfig")[32:]
     space_count = 0
     property_part = 0
@@ -233,8 +238,10 @@ def get_nmap_probes(ports: list[int]) -> list[list[dict[str, 'str|int|float|list
      (string), "probe_name" (string), "probe string" (string), "rarity" (integer), "ports" (list of ints), "matches"
      (list of dictionaries), "total_wait" (float).
     """
-    probes = [[], [], [], [], [], [], [], [], [], []]
+    # Create a list of ten empty lists. Read return value docstring description for more help.
+    probes = [[] for i in range(10)]
     probe = {}
+    # Try statement is used because nmap-service-probes.txt could be corrupt, if so, ParsingError is raised.
     try:
         for line in nmap_service_probes.get_contents():
             # Use string splicing to add probe properties to a dictionary.
@@ -271,8 +278,8 @@ def get_nmap_probes(ports: list[int]) -> list[list[dict[str, 'str|int|float|list
                 # Converts from ms to s.
                 probe["total_wait"] = int(line[12:]) / 1000
             elif line == "##############################NEXT PROBE##############################\n":
-                # If the probe isn't empty and any of the inputted ports are in the probe's list of ports or if there
-                # are no ports.
+                # If the probe isn't empty and any of the inputted ports are in the probe's list of ports or if no ports
+                # where entered, then add probe to the probe list corresponding to its rarity.
                 if probe != {} and (any(port in probe["ports"] for port in ports) or probe["ports"] == []):
                     probes[probe["rarity"]].append(probe)
         return probes
@@ -299,7 +306,7 @@ def get_match_info(line: str) -> dict[str, 'str|int']:
     pattern = pattern_match.group('pattern') if pattern_match else None
     flags = pattern_match.group('flags') if pattern_match else ''
 
-    # Performing binary 'or' on pattern_flags with ints.
+    # Performing binary 'or' on pattern_flags. This puts the flags into a single usable value.
     pattern_flags = 0
     if 'i' in flags:
         pattern_flags |= pcre2.I
@@ -317,6 +324,7 @@ def get_match_info(line: str) -> dict[str, 'str|int']:
     }
 
 
+# Ignore the next comment, it's used for PyCharm.
 # noinspection PyUnresolvedReferences
 def match_response(response: str, matches: list[dict]) -> dict[str, 'str|int']:
     """
@@ -445,6 +453,7 @@ def choose_and_send_probe(ip: str, port: int, timeout: 'int|float' = DEFAULT_PRO
         banner = probe_device(ip, port, probe["protocol"], probe_text, timeout)
     except (socket.error, UnicodeDecodeError) as error:
         banner = error
+
 
     # Returns relevant information based on probe outcome.
     if isinstance(banner, Exception):
