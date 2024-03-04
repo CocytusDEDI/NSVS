@@ -121,20 +121,21 @@ def probe_device(ip: str, port: int, protocol: str, probe_text: bytes = None,
     :raise UnicodeDecodeError: If error in decoding received banner.
     :return: A banner (the initial response back from a device upon connecting).
     """
+    NUMBER_OF_BYTES_TO_RECEIVE = 1024
     # Deciding to use TCP or UDP.
     if protocol == "TCP":
         connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     elif protocol == "UDP":
         connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     else:
-        raise ValueError
+        raise ValueError("Protocol must be either 'TCP' or 'UDP'")
     connection.settimeout(timeout)
     connection.connect((ip, port))
     # If there is a probe_text, send it.
     if probe_text:
         connection.sendall(probe_text)
     # Receive and decode received data.
-    banner = connection.recv(1024).decode().strip("\n").strip("\r")
+    banner = connection.recv(NUMBER_OF_BYTES_TO_RECEIVE).decode().strip("\n").strip("\r")
     connection.close()
     return banner
 
